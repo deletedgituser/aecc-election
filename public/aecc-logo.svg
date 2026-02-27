@@ -1,0 +1,14 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="60" r="58" fill="#1e40af" stroke="#1e3a8a" strokeWidth="2"/>
+  <circle cx="60" cy="60" r="50" fill="#2563eb"/>
+  
+  <!-- AECC Text -->
+  <text x="60" y="72" fontFamily="Arial, sans-serif" fontSize="36" fontWeight="bold" fill="white" textAnchor="middle">
+    AECC
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="60" y="100" fontFamily="Arial, sans-serif" fontSize="10" fill="white" textAnchor="middle" opacity="0.9">
+    ELECTION
+  </text>
+</svg>

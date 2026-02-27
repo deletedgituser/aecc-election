@@ -1,36 +1,212 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AECC Election - Real-Time Voting Display System
 
-## Getting Started
+A modern, fast, and real-time election voting display system for Aneco Employees' Credit Cooperative using Next.js, MySQL, and Prisma.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Public Landing Page**: Beautiful, responsive display of candidate results sorted by vote count
+- **Real-Time Updates**: Server-Sent Events (SSE) for instant updates without page refresh
+- **Admin Control Panel**: Manage candidates and votes with password protection
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+- **Database Persistence**: MySQL database with Prisma ORM
+- **High Performance**: Fast initial load and smooth real-time updates
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 16+ installed
+- MySQL 5.7+ running locally or accessible
+
+### Installation
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Set up MySQL database:**
+
+   Create a new database:
+   ```sql
+   CREATE DATABASE aecc_election CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   ```
+
+3. **Configure environment variables:**
+
+   Edit `.env.local` and update the database URL:
+   ```
+   DATABASE_URL="mysql://root:password@localhost:3306/aecc_election"
+   ```
+   
+   Replace `root` and `password` with your MySQL credentials.
+
+4. **Run Prisma migrations:**
+   ```bash
+   npm run prisma:migrate
+   ```
+   
+   When prompted, give the migration a name (e.g., `init`).
+
+5. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+6. **Access the application:**
+   - **Landing Page**: http://localhost:3000 (public view)
+   - **Admin Panel**: http://localhost:3000/admin (password: `@n3c0`)
+
+## Usage
+
+### Landing Page (Public View)
+
+- Displays all candidates sorted by vote count (highest first)
+- Shows real-time vote counts and vote percentage
+- Auto-updates every second via Server-Sent Events
+- Responsive design adapts to all screen sizes
+- Live connection indicator
+
+### Admin Panel
+
+1. Navigate to `/admin`
+2. Enter password: `@n3c0`
+3. **Add Candidates**: Enter candidate name and click "Add"
+4. **Update Votes**: Use + and − buttons to adjust vote counts
+5. **Search**: Filter candidates by name in real-time
+6. **Delete**: Remove candidates from the system
+7. Updates instantly reflect on the landing page
+
+## Project Structure
+
+```
+aecc-election/
+├── app/
+│   ├── page.tsx                 # Landing page (public view)
+│   ├── admin/
+│   │   └── page.tsx             # Admin control panel
+│   ├── api/
+│   │   ├── candidates/
+│   │   │   ├── route.ts         # GET/POST candidates
+│   │   │   └── [id]/route.ts    # PATCH/DELETE specific candidate
+│   │   └── stream/
+│   │       └── route.ts         # Server-Sent Events for real-time updates
+│   ├── layout.tsx               # Root layout
+│   └── globals.css              # Global styles
+├── lib/
+│   ├── prisma.ts                # Prisma client configuration
+│   └── types.ts                 # TypeScript type definitions
+├── prisma/
+│   └── schema.prisma            # Database schema
+├── .env.local                   # Environment variables
+└── package.json                 # Dependencies and scripts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Database Schema
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sql
+CREATE TABLE candidates (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) UNIQUE NOT NULL,
+  voteCount INT DEFAULT 0,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## API Endpoints
 
-## Learn More
+### GET /api/candidates
+Returns all candidates sorted by vote count (descending).
 
-To learn more about Next.js, take a look at the following resources:
+### POST /api/candidates
+Add a new candidate. Requires JSON body:
+```json
+{
+  "name": "Candidate Name"
+}
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### PATCH /api/candidates/:id
+Update a candidate's vote count. Requires JSON body:
+```json
+{
+  "voteCount": 42
+}
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### DELETE /api/candidates/:id
+Delete a candidate.
 
-## Deploy on Vercel
+### GET /api/stream
+Server-Sent Events stream for real-time updates. Client receives updates every second.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Available Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run prisma:migrate` - Run Prisma migrations
+- `npm run prisma:studio` - Open Prisma Studio (database GUI)
+
+## Technology Stack
+
+- **Framework**: Next.js 16
+- **UI Library**: React 19
+- **Database**: MySQL
+- **ORM**: Prisma 5
+- **Styling**: Tailwind CSS
+- **Real-Time**: Server-Sent Events (SSE)
+- **Language**: TypeScript
+
+## Admin Password
+
+- Default password: `@n3c0`
+- Change this in `/app/admin/page.tsx` (ADMIN_PASSWORD constant)
+
+## Performance Optimizations
+
+- Efficient database queries with Prisma
+- Real-time updates via SSE (low overhead)
+- Responsive design with Tailwind CSS
+- Optimized component rendering with React hooks
+- Server-stream data updates minimize latency
+
+## Troubleshooting
+
+### Database Connection Error
+- Verify MySQL is running
+- Check `.env.local` DATABASE_URL is correct
+- Ensure database exists: `SHOW DATABASES;`
+
+### Migrations Failed
+```bash
+# Reset migrations (WARNING: deletes data)
+npx prisma migrate reset
+
+# Or manually run:
+npx prisma migrate dev
+```
+
+### Real-Time Updates Not Working
+- Check browser console for errors
+- Verify `/api/stream` endpoint is accessible
+- Refresh page to reconnect
+
+## Future Enhancements
+
+- WebSocket support for multi-client synchronization
+- Vote history and audit logs
+- Export results as CSV/PDF
+- Multiple election support
+- User authentication improvements
+- Animation and transition improvements
+
+## License
+
+This project is proprietary and designed for Aneco Employees' Credit Cooperative.
+
+## Support
+
+For issues or questions, refer to the troubleshooting section or check the browser console for error messages.

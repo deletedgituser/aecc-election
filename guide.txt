@@ -1,0 +1,7 @@
+npm install
+
+# Complete setup (database + migrations)
+npm run db:setup
+
+# Then start the app
+npm run dev
