@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { isValidCategory } from '@/lib/constants'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url)
+    const category = searchParams.get('category')
+
+    const where = category && isValidCategory(category)
+      ? { category }
+      : {}
+
     const candidates = await prisma.candidate.findMany({
+      where,
       orderBy: {
         voteCount: 'desc',
       },
@@ -21,7 +30,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { name } = await request.json()
+    const { name, category: rawCategory } = await request.json()
     
     if (!name || typeof name !== 'string') {
       return NextResponse.json(
@@ -37,9 +46,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const category = rawCategory && isValidCategory(rawCategory)
+      ? rawCategory
+      : 'board_of_director'
+
     const candidate = await prisma.candidate.create({
       data: {
         name: name.trim(),
+        category,
+        voteCount: 1,
       },
     })
 
@@ -53,15 +68,16 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Error creating candidate:', error)
     
-    if (error.code === 'P2002') {
+    if (error?.code === 'P2002') {
       return NextResponse.json(
-        { error: 'Candidate already exists' },
+        { error: 'Candidate already exists for this position' },
         { status: 400 }
       )
     }
 
+    const message = error?.message || 'Unknown error'
     return NextResponse.json(
-      { error: 'Failed to create candidate' },
+      { error: 'Failed to create candidate', details: message },
       { status: 500 }
     )
   }

@@ -1,6 +1,7 @@
 export interface Candidate {
   id: number
   name: string
+  category: string
   voteCount: number
   createdAt: Date
   updatedAt: Date

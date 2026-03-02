@@ -43,17 +43,22 @@ A modern, fast, and real-time election voting display system for Aneco Employees
 
 4. **Run Prisma migrations:**
    ```bash
-   npm run prisma:migrate
+   npx prisma migrate deploy
    ```
-   
-   When prompted, give the migration a name (e.g., `init`).
+   Or for a fresh setup: `npm run db:setup`
 
-5. **Start the development server:**
+5. **Regenerate Prisma client** (if you get "Failed to create candidate" or "Unknown argument category"):
+   ```bash
+   npx prisma generate
+   ```
+   Stop the dev server first, then run this, then restart.
+
+6. **Start the development server:**
    ```bash
    npm run dev
    ```
 
-6. **Access the application:**
+7. **Access the application:**
    - **Landing Page**: http://localhost:3000 (public view)
    - **Admin Panel**: http://localhost:3000/admin (password: `@n3c0`)
 

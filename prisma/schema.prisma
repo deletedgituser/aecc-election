@@ -11,11 +11,13 @@ datasource db {
 }
 
 model Candidate {
-  id        Int     @id @default(autoincrement())
-  name      String  @unique
-  voteCount Int     @default(1)
+  id        Int      @id @default(autoincrement())
+  name      String
+  category  String   @default("board_of_director")
+  voteCount Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([name, category])
   @@map("candidates")
 }
